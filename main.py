@@ -6,6 +6,8 @@ import uvicorn
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
+
+
 @app.get("/")
 def home():
     return {"message": "Asset Register is running!"}  

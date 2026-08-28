@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>All Assets</h1>
+    <table>
+        <tr><th>Tag</th><th>Type</th><th>Model</th><th>Status</th></tr>
+        {% for asset in assets %}
+            <tr>
+                <td>{{ asset.tag }}</td>
+                <td>{{ asset.type }}</td>
+                <td>{{ asset.model }}</td>
+                <td>{{ asset.status }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

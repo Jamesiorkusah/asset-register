@@ -1,4 +1,6 @@
+/* Page-wide defaults: these styles are inherited by most elements. */
 body {
+    /* Use a familiar system font and fall back if it is unavailable. */
     font-family: "Segoe UI", Arial, sans-serif;
     background-color: #1e1f22;
     color: #d4d4d4;
@@ -6,13 +8,16 @@ body {
     line-height: 1.5;
 }
 
-h1, h2{
+/* Shared styling for the main and secondary page headings. */
+h1,
+h2 {
     color: #f0f0f0;
     font-weight: 600;
     border-bottom: 1px solid #3a3b3e;
     padding-bottom: 0.5rem;
 }
 
+/* The table fills the available page width and uses one border between cells. */
 table {
     border-collapse: collapse;
     width: 100%;
@@ -21,12 +26,15 @@ table {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-th, td{
+/* Apply the same spacing and alignment to table headers and data cells. */
+th,
+td {
     padding: 10px 14px;
     text-align: left;
     border: 1px solid #3a3b3e;
 }
 
+/* Headers are visually stronger so users can identify each column. */
 th {
     background-color: #303136;
     color: #f0f0f0;
@@ -36,24 +44,29 @@ th {
     letter-spacing: 0.03rem;
 }
 
+/* Alternate row colors make it easier to follow data across the table. */
 tr:nth-child(even) {
     background-color: #2b2c30;
 }
 
+/* Highlight the row currently under the mouse pointer. */
 tr:hover {
     background-color: #35363b;
 }
 
+/* Override the inherited body text color and set a readable cell size. */
 td {
     color: #c7c7c7;
     font-size: 0.95rem;
 }
 
+/* Links use a contrasting color so they are easy to recognize. */
 a {
     color: #8ab4f8;
     text-decoration: none;
 }
 
+/* Show an underline when the user points at a link. */
 a:hover {
     text-decoration: underline;
-}
+} 

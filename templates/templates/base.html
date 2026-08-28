@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-    <meta charset="UTF-8">
-    <title> IT Asset Register</title>
-    <link rel="stylesheet" href="C:\Users\ZBOOK FIREFLY 15\OneDrive\Documents\asset-register\static\static\style.css">
-</head>
-<body>
-    <header>
-        <h1>IT Asset Register</h1>
-    </header>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-</body>
+        <!-- UTF-8 supports a wide range of characters in the page text. -->
+        <meta charset="UTF-8">
+
+        <!-- This title appears in the browser tab. -->
+        <title>IT Asset Register</title>
+
+        <!-- Load the CSS file that controls the page's appearance. -->
+        <link rel="stylesheet" href="C:\Users\ZBOOK FIREFLY 15\OneDrive\Documents\asset-register\static\static\style.css">
+    </head>
+    <body>
+        <!-- The header is shared by every page that extends this template. -->
+        <header>
+            <h1>IT Asset Register</h1>
+        </header>
+
+        <main>
+            <!-- Child templates insert their page-specific HTML in this block. -->
+            {% block content %}{% endblock %}
+        </main>
+    </body>
 </html>

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import uvicorn
@@ -31,8 +31,24 @@ def list_assets(request: Request):
     # The request must be passed to the template so Jinja can create the response.
     # The assets list is also passed in, allowing assets.html to display each item.
     return templates.TemplateResponse(
-        "assets.html", {"request": request, "assets": assets}
+        request, "assets.html", {"request": request, "assets": assets}
     )
+
+@app.get("/assets/new", response_class=HTMLResponse)
+def new_asset_form(request: Request):
+    return templates.TemplateResponse(request, "assets_form.html", {"request": request})
+
+@app.post("/assets/new")
+def create_asset(
+    tag: str = Form(...),
+    asset_type: str = Form(...),
+    model: str = Form(...),
+    status: str = Form(...),
+):
+    new = {"tag": tag, "type": asset_type, "model": model, "status": status}
+    assets.append(new)
+    print("RECEIVED", new)
+    return {"saved": new}
 
 # The {tag} part is a URL parameter. For example, /assets/NIT-001 looks up NIT-001.
 @app.get("/assets/{tag}")
@@ -50,3 +66,4 @@ def get_asset_by_tag(tag: str):
 if __name__ == "__main__":
     # reload=True restarts the development server automatically after code changes.
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+

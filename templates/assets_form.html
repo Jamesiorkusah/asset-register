@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Add New Asset</h1>
+<form method="post" action="/assets/new">
+<p><label> Asset Tag<br><input type="text" name="tag" required></label></p>
+<p><label>Type<br>
+    <select name="asset_type">
+        <option>Laptop</option>
+        <option>router</option>
+        <option>Monitor</option>
+        <option>Printer</option>
+
+    </select>></label></p>
+<p><labeL>Status<br>
+    <select name="status">
+        <option>In Use</option>
+        <option>In Storage</option>
+        <option>Retired</option>
+        <option>faulty</option>
+    </select></label></p>
+<button type="submit">Save Asset</button>
+</form>
+{% endblock %}

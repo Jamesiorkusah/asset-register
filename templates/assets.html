@@ -1,0 +1,29 @@
+<!-- Reuse the shared page structure from base.html. -->
+{% extends "base.html" %}
+
+<!-- Everything inside this block is inserted into base.html's main section. -->
+{% block content %}
+<h1>All Assets</h1>
+
+<p><a href="/assets/new">Add New Asset</a></p>
+<!-- The table headings describe the four values shown for each asset. -->
+<table>
+
+        <th>Tag</th>
+        <th>Type</th>
+        <th>Model</th>
+        <th>Status</th>
+    </tr>
+
+    <!-- Jinja repeats this row once for every item in the assets list. -->
+    {% for asset in assets %}
+    <tr>
+        <!-- {{ asset.field }} displays a value from the current asset. -->
+        <td>{{ asset.tag }}</td>
+        <td>{{ asset.type }}</td>
+        <td>{{ asset.model }}</td>
+        <td>{{ asset.status }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %} 

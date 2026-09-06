@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, Form
+from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import uvicorn
@@ -65,10 +66,14 @@ def create_asset(
     asset_type: str = Form(...),
     status: str = Form(...),
 ):
+   #Check for duplicate tags
+   for existing in assets:
+       if existing["tag"].lower() == tag.lower():
+           return RedirectResponse(url="/assets?error=duplicate", status_code=303)
    new = {"tag": tag, "type": asset_type,  "status": status}
    assets.append(new)
    print("RECEIVED:", new)
-   return {"saved": new}
+   return RedirectResponse(url="/assets", status_code=303)
 
 # Run Uvicorn only when this file is started directly, not when it is imported.
 if __name__ == "__main__":

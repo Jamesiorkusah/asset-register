@@ -7,6 +7,19 @@
 
 <p><a href="/assets/new">Add New Asset</a></p>
 <!-- The table headings describe the four values shown for each asset. -->
+ <form method="get" action="/assets">
+    <input type="text" name="q" placeholder="Search by tag or type" value="{{q or ''}}">
+    <select name="status">
+        <option value="">All statuses</option>
+        <option value="In Use">In Use</option>
+        <option value="In store">In Store</option>
+        <option value="Faulty">Faulty</option>
+        <option value="Retired">Retired</option>
+    </select>
+    <button type ="submit">Filter</button>
+    <a href="/assets">Clear</a>
+ </form>
+ <p>{{assets|length}} asset (s) found.</p>
 <table>
 
         <th>Tag</th>

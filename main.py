@@ -1,7 +1,9 @@
+
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from typing import Optional
 import uvicorn
 
 # FastAPI creates the web application and provides the tools for defining routes.
@@ -66,15 +68,34 @@ def create_asset(
     asset_type: str = Form(...),
     status: str = Form(...),
 ):
-   #Check for duplicate tags
-   for existing in assets:
-       if existing["tag"].lower() == tag.lower():
-           return RedirectResponse(url="/assets?error=duplicate", status_code=303)
-   new = {"tag": tag, "type": asset_type,  "status": status}
-   assets.append(new)
-   print("RECEIVED:", new)
-   return RedirectResponse(url="/assets", status_code=303)
+    # Check for duplicate tags
+    for existing in assets:
+        if existing["tag"].lower() == tag.lower():
+            return RedirectResponse(url="/assets?error=duplicate", status_code=303)
 
+    new = {
+        "tag": tag,
+        "type": asset_type,
+        "status": status,
+    }
+
+    assets.append(new)
+    print("RECEIVED:", new)
+    return RedirectResponse(url="/assets", status_code=303)
+
+@app.get("/assets", response_class=HTMLResponse)
+def list_assets(request: Request, status: Optional [str] = None, q: Optional [str] = None):
+    results = assets
+    if status:
+     results = [a for a in results if a ["status"] == status]
+    if q:
+        term = q.lower()
+        results =[ a for a in results
+              if term in a ["model"].lower() or term in a ["tag"].lower()]    
+    return templates.TemplateResponse(
+           "assets.html",
+           {"request": request, "assets": results, "status": status, "q": q}
+    )
 # Run Uvicorn only when this file is started directly, not when it is imported.
 if __name__ == "__main__":
     # reload=True restarts the development server automatically after code changes.

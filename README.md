@@ -37,3 +37,9 @@
 **Cloned and initialized the asset-register Git repository on Github.**
 **Set up the local project structure with virtual environment configuration and FastApi backend foundation**
 **Developed the initial FastApi server routes in main.py and structured the Jinja2 templates and CSS static folders**
+
+## Week 2 Progress :
+**Added a form for creating new IT assets and storing them in the in-memory register.**
+**Built asset filtering by status and search query to make it easier to find specific items.**
+**Improved the main route logic so the app can display and manage asset records more effectively.**
+**The system can now add assets and filter them in the user interface for presentation and demonstration.**

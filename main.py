@@ -6,12 +6,17 @@ from fastapi.templating import Jinja2Templates
 from typing import Optional
 import uvicorn
 
+import models
+from database import engine
+models.Base.metadata.create_all(bind=engine)
+
 # FastAPI creates the web application and provides the tools for defining routes.
 app = FastAPI()
 
 # Jinja2Templates lets Python send data to HTML files with dynamic content.
 # The folder contains the HTML templates used by the /assets page.
 templates = Jinja2Templates(directory="templates")
+
 
 # This is temporary in-memory data: it resets whenever the application restarts.
 # Each dictionary represents one asset and stores its tag, type, and status.

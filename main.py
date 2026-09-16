@@ -1,4 +1,5 @@
-
+from fastapi import Depends
+from sqlalchemy.orm import Session
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
@@ -6,8 +7,9 @@ from fastapi.templating import Jinja2Templates
 from typing import Optional
 import uvicorn
 
+
 import models
-from database import engine
+from database import engine, get_db
 models.Base.metadata.create_all(bind=engine)
 
 # FastAPI creates the web application and provides the tools for defining routes.
@@ -55,16 +57,14 @@ def new_asset_form(request: Request):
 
 
 # The {tag} part is a URL parameter. For example, /assets/NIT-001 looks up NIT-001.
-@app.get("/assets/{tag}")
-def get_asset_by_tag(tag: str):
-    # Check each asset until the tag from the URL matches an asset's tag.
-    for asset in assets:
-        if asset["tag"] == tag:
-            # Return the matching asset as JSON and stop searching.
-            return {"asset": asset}
-
-    # This response is returned only when no asset has the requested tag.
-    return {"error": "Asset not found"}
+app.get("/assets/{tag}", response_class=HTMLResponse)
+def get_asset(tag: str, request: Request, db: Session = Depends(get_db)):
+    asset = db.query(models.Asset).filter(models.Asset.tag == tag).first()
+    if not asset:
+        return HTMLResponse("Asset not found", status_code=404)
+    return templates.TemplateResponse(
+        "asset_detail.html", {"request": request, "asset": asset}
+    )
 
 
 @app.post("/assets/new")
@@ -89,17 +89,24 @@ def create_asset(
     return RedirectResponse(url="/assets", status_code=303)
 
 @app.get("/assets", response_class=HTMLResponse)
-def list_assets(request: Request, status: Optional [str] = None, q: Optional [str] = None):
-    results = assets
+def list_assets_page(
+    request: Request,
+    status: Optional[str] = None,
+    q: Optional[str] = None,
+    db: Session = Depends(get_db),
+):
+    query = db.query(models.Asset)
     if status:
-     results = [a for a in results if a ["status"] == status]
+        query = query.filter(models.Asset.status == status)
     if q:
-        term = q.lower()
-        results =[ a for a in results
-              if term in a ["model"].lower() or term in a ["tag"].lower()]    
+        pattern = f"%{q}%"
+        query = query.filter(
+            models.Asset.model.ilike(pattern) | models.Asset.tag.ilike(pattern)
+        )
+    results = query.order_by(models.Asset.tag).all()
     return templates.TemplateResponse(
-           "assets.html",
-           {"request": request, "assets": results, "status": status, "q": q}
+        "assets.html",
+        {"request": request, "assets": results, "status": status, "q": q},
     )
 # Run Uvicorn only when this file is started directly, not when it is imported.
 if __name__ == "__main__":

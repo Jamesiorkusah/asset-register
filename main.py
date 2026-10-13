@@ -60,6 +60,16 @@ def get_asset(tag: str, request: Request, db: Session = Depends(get_db)):
         "asset_detail.html",
         {"request": request, "asset": asset},
     )
+@app.get("/assets/{asset_id}/edit", response_class=HTMLResponse)
+def edit_asset_form(asset_id: int, request: Request, db: Session = Depends(get_db)):
+    asset = db.query(models.Asset).filter(models.Asset.id == asset_id).first()
+    if not asset:
+        return HTMLResponse("Asset not found", status_code=404)
+    return templates.TemplateResponse(
+        request,
+        "asset_edit.html",
+        {"request": request, "asset": asset},
+    )
 
 
 @app.post("/assets/new")
@@ -80,6 +90,30 @@ def create_asset(
     db.refresh(new_asset)
     return RedirectResponse(url="/assets", status_code=303)
 
+@app.post("/assets/{asset_id}/edit")
+def update_asset(
+    asset_id: int,
+    tag: str = Form(...),
+    asset_type: str = Form(...),
+    model: str = Form(...),
+    status: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    asset = db.query(models.Asset).filter(models.Asset.id == asset_id).first()
+    if not asset:
+        return HTMLResponse("Asset not found", status_code=404)
+    clash = db.query(models.Asset).filter(
+        models.Asset.tag == tag, models.Asset.id != asset_id
+    ).first()
+    if clash:
+        return RedirectResponse(url=f"/assets/{asset_id}/edit?error=duplicate",
+                                status_code=303)
+    asset.tag = tag
+    asset.type = asset_type
+    asset.model = model
+    asset.status = status
+    db.commit()
+    return RedirectResponse(url="/assets", status_code=303)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

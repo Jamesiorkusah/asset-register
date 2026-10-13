@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Edit {{ asset.tag }}</h1>
+<form method="post" action="/assets/{{ asset.id }}/edit">
+  <p><label>Asset Tag<br>
+    <input type="text" name="tag" value="{{ asset.tag }}" required></label></p>
+  <p><label>Type<br>
+    <select name="asset_type">
+      {% for t in ["Laptop", "Router", "Printer", "Monitor"] %}
+      <option {% if asset.type == t %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select></label></p>
+  <p><label>Model<br>
+    <input type="text" name="model" value="{{ asset.model }}" required></label></p>
+  <p><label>Status<br>
+    <select name="status">
+      {% for s in ["In Use", "In Store", "Faulty", "Retired"] %}
+      <option {% if asset.status == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select></label></p>
+  <button type="submit">Save Changes</button>
+  <a href="/assets">Cancel</a>
+</form>
+{% endblock %}

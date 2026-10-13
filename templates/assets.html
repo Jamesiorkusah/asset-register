@@ -21,11 +21,12 @@
  </form>
  <p>{{assets|length}} asset (s) found.</p>
 <table>
-
+    <tr>
         <th>Tag</th>
         <th>Type</th>
         <th>Model</th>
         <th>Status</th>
+        <th>Actions</th>
     </tr>
 
     <!-- Jinja repeats this row once for every item in the assets list. -->
@@ -36,6 +37,7 @@
         <td>{{ asset.type }}</td>
         <td>{{ asset.model }}</td>
         <td>{{ asset.status }}</td>
+        <td><a href="/assets/{{ asset.id }}/edit">Edit</a></td>
     </tr>
     {% endfor %}
 </table>

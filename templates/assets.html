@@ -37,7 +37,13 @@
         <td>{{ asset.type }}</td>
         <td>{{ asset.model }}</td>
         <td>{{ asset.status }}</td>
-        <td><a href="/assets/{{ asset.id }}/edit">Edit</a></td>
+        <td>
+            <a href="/assets/{{ asset.id }}/edit">Edit</a>
+            <form method="post" action="/assets/{{ asset.id }}/delete"
+                  onsubmit="return confirm('Delete {{ asset.tag }}? This cannot be undone.');">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
     </tr>
     {% endfor %}
 </table>

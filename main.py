@@ -115,5 +115,13 @@ def update_asset(
     db.commit()
     return RedirectResponse(url="/assets", status_code=303)
 
+@app.post("/assets/{asset_id}/delete")
+def delete_asset(asset_id: int, db: Session = Depends(get_db)):
+    asset = db.query(models.Asset).filter(models.Asset.id == asset_id).first()
+    if asset:
+        db.delete(asset)
+        db.commit()
+    return RedirectResponse(url="/assets", status_code=303)
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

@@ -1,45 +1,73 @@
-## Author:
+## Author
 **James Jnr Iorkuah**
 
-## Project Name :
+## Project Name
 **IT Asset Register**
 
-## Description :
- **A web applicationwhere staff can log in and record every laptop,router,printer and monitor it owns: asset tag,model,serial number,status and who it's signed to, and where it lives.**
+## Description
+A web application for recording and tracking IT assets such as laptops, routers, printers, and monitors. Each asset includes a tag, type, model, status, and is stored in a persistent SQLite database using SQLAlchemy.
 
-## stack: 
-**.Backend Framework: FastApi (Python)**
-**.ASGI Server: Uvicorn**
-**.Templating Engine: Jinja2**
-**.Styling: CSS3**
-**.version Control: Git and Github**
+## Stack
+- **Backend Framework:** FastAPI (Python)
+- **Database:** SQLite with SQLAlchemy ORM
+- **ASGI Server:** Uvicorn
+- **Templating Engine:** Jinja2
+- **Styling:** CSS3
+- **Version Control:** Git and GitHub
 
-## How to Run the App :
-1. **Clone the repositiry:**
-   **git clone https://github.com/Jamesiorkusah/asset-register.git cd asset-register**
+## Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Jamesiorkusah/asset-register.git
+   cd asset-register
+   ```
 
-2. **Activate the virtual environment**
- **On Windows(Powershell): .venv\Scripts\Activate.ps1**
- **On macOs/Linux: source .venv/bin/activate**
- 
-3. **Install dependencies**
- **: pip install -r requirementa.txt**
+2. Activate the virtual environment:
+   ```powershell
+   .\venv\Scripts\Activate.ps1
+   ```
+   or on macOS/Linux:
+   ```bash
+   source venv/bin/activate
+   ```
 
-4. **Start the development server**
-**: uvicorn main:app --reload**
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-5. **view the app**
-**Open your browser and navigate to :**
-**Api Message: http://127.0.0.1:8000**
-**Assets Template: http://127.0.0.1/assets**
+4. Create the database tables and seed initial sample data (first-time setup):
+   ```bash
+   python seed.py
+   ```
 
-## Week 1 Progress :
-**Cloned and initialized the asset-register Git repository on Github.**
-**Set up the local project structure with virtual environment configuration and FastApi backend foundation**
-**Developed the initial FastApi server routes in main.py and structured the Jinja2 templates and CSS static folders**
+5. Start the development server:
+   ```bash
+   uvicorn main:app --reload
+   ```
 
-## Week 2 Progress :
-**Added a form for creating new IT assets and storing them in the in-memory register.**
-**Built asset filtering by status and search query to make it easier to find specific items.**
-**Improved the main route logic so the app can display and manage asset records more effectively.**
-**The system can now add assets and filter them in the user interface for presentation and demonstration.**
+6. Open the app in a browser:
+   - API message: http://127.0.0.1:8000
+   - Assets page: http://127.0.0.1:8000/assets
+
+## Database Notes
+This project now uses SQLite for persistent storage via SQLAlchemy. The database file is created automatically when the app runs, and `seed.py` adds initial asset records the first time you set up the project.
+
+## Progress
+### Week 1
+- Cloned and initialized the Git repository.
+- Set up the project structure and virtual environment.
+- Built the FastAPI foundation and template structure.
+
+### Week 2
+- Added asset creation forms and database-backed storage.
+- Implemented filtering and searching for assets.
+- Replaced the temporary in-memory list with a persistent SQLite database using SQLAlchemy.
+- Added `seed.py` for first-time setup and initial data seeding.
+
+### Week 3
+- Fixed route registration and database-backed asset detail rendering.
+- Added persistent SQLite storage for asset records across app restarts.
+- Resolved duplicate-tag checks by querying the database instead of the old in-memory list.
+- Improved template and static file setup so pages render consistently in the browser.
+- Verified the app can save assets and keep them available after restarting the server.

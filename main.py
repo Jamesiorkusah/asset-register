@@ -1,92 +1,26 @@
-from fastapi import Depends
-from sqlalchemy.orm import Session
-from fastapi import FastAPI, Request, Form
-from fastapi.responses import RedirectResponse
-from fastapi.responses import HTMLResponse
+from fastapi import Depends, FastAPI, Form, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 from typing import Optional
 import uvicorn
 
-
 import models
 from database import engine, get_db
+
 models.Base.metadata.create_all(bind=engine)
 
-# FastAPI creates the web application and provides the tools for defining routes.
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static/static"), name="static")
 
-# Jinja2Templates lets Python send data to HTML files with dynamic content.
-# The folder contains the HTML templates used by the /assets page.
 templates = Jinja2Templates(directory="templates")
 
 
-# This is temporary in-memory data: it resets whenever the application restarts.
-# Each dictionary represents one asset and stores its tag, type, and status.
-assets = [
-    {"tag": "NIT-001", "type": "laptop", "status": "in use"},
-    {"tag": "NIT-002", "type": "router", "status": "in use"},
-    {
-        "tag": "NIT-003",
-        "type": "printer",
-        "status": "faulty",
-    },
-]
-
-
-# @app.get("/") connects this function to GET requests sent to the website root.
-# A GET request is normally used when a user wants to read or retrieve data.
 @app.get("/")
 def home():
-    # FastAPI automatically converts this Python dictionary into a JSON response.
     return {"message": "Asset Register is running!"}
 
-
-# This route displays all assets in a browser-friendly HTML page.
-@app.get("/assets", response_class=HTMLResponse)
-def list_assets(request: Request):
-    # The request must be passed to the template so Jinja can create the response.
-    # The assets list is also passed in, allowing assets.html to display each item.
-    return templates.TemplateResponse(
-        request, "assets.html", {"request": request, "assets": assets}
-    )
-
-
-@app.get("/assets/new", response_class=HTMLResponse)
-def new_asset_form(request: Request):
-    return templates.TemplateResponse(request, "assets_form.html", {"request": request})
-
-
-# The {tag} part is a URL parameter. For example, /assets/NIT-001 looks up NIT-001.
-app.get("/assets/{tag}", response_class=HTMLResponse)
-def get_asset(tag: str, request: Request, db: Session = Depends(get_db)):
-    asset = db.query(models.Asset).filter(models.Asset.tag == tag).first()
-    if not asset:
-        return HTMLResponse("Asset not found", status_code=404)
-    return templates.TemplateResponse(
-        "asset_detail.html", {"request": request, "asset": asset}
-    )
-
-
-@app.post("/assets/new")
-def create_asset(
-    tag: str = Form(...),
-    asset_type: str = Form(...),
-    status: str = Form(...),
-):
-    # Check for duplicate tags
-    for existing in assets:
-        if existing["tag"].lower() == tag.lower():
-            return RedirectResponse(url="/assets?error=duplicate", status_code=303)
-
-    new = {
-        "tag": tag,
-        "type": asset_type,
-        "status": status,
-    }
-
-    assets.append(new)
-    print("RECEIVED:", new)
-    return RedirectResponse(url="/assets", status_code=303)
 
 @app.get("/assets", response_class=HTMLResponse)
 def list_assets_page(
@@ -105,10 +39,47 @@ def list_assets_page(
         )
     results = query.order_by(models.Asset.tag).all()
     return templates.TemplateResponse(
+        request,
         "assets.html",
         {"request": request, "assets": results, "status": status, "q": q},
     )
-# Run Uvicorn only when this file is started directly, not when it is imported.
+
+
+@app.get("/assets/new", response_class=HTMLResponse)
+def new_asset_form(request: Request):
+    return templates.TemplateResponse(request, "assets_form.html", {"request": request})
+
+
+@app.get("/assets/{tag}", response_class=HTMLResponse)
+def get_asset(tag: str, request: Request, db: Session = Depends(get_db)):
+    asset = db.query(models.Asset).filter(models.Asset.tag == tag).first()
+    if not asset:
+        return HTMLResponse(f"Asset {tag} not found", status_code=404)
+    return templates.TemplateResponse(
+        request,
+        "asset_detail.html",
+        {"request": request, "asset": asset},
+    )
+
+
+@app.post("/assets/new")
+def create_asset(
+    tag: str = Form(...),
+    asset_type: str = Form(...),
+    model: str = Form(...),
+    status: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    existing = db.query(models.Asset).filter(models.Asset.tag == tag).first()
+    if existing:
+        return RedirectResponse(url="/assets?error=duplicate", status_code=303)
+
+    new_asset = models.Asset(tag=tag, type=asset_type, model=model, status=status)
+    db.add(new_asset)
+    db.commit()
+    db.refresh(new_asset)
+    return RedirectResponse(url="/assets", status_code=303)
+
+
 if __name__ == "__main__":
-    # reload=True restarts the development server automatically after code changes.
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Asset Details</h1>
+
+<p><strong>Tag:</strong> {{ asset.tag }}</p>
+<p><strong>Type:</strong> {{ asset.type }}</p>
+<p><strong>Model:</strong> {{ asset.model }}</p>
+<p><strong>Status:</strong> {{ asset.status }}</p>
+
+<p><a href="/assets">Back to Assets</a></p>
+{% endblock %}

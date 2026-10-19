@@ -29,22 +29,8 @@
         <th>Actions</th>
     </tr>
 
-    <!-- Jinja repeats this row once for every item in the assets list. -->
-    {% for asset in assets %}
-    <tr>
-        <!-- {{ asset.field }} displays a value from the current asset. -->
-        <td>{{ asset.tag }}</td>
-        <td>{{ asset.type }}</td>
-        <td>{{ asset.model }}</td>
-        <td>{{ asset.status }}</td>
-        <td>
-            <a href="/assets/{{ asset.id }}/edit">Edit</a>
-            <form method="post" action="/assets/{{ asset.id }}/delete"
-                  onsubmit="return confirm('Delete {{ asset.tag }}? This cannot be undone.');">
-                <button type="submit">Delete</button>
-            </form>
-        </td>
-    </tr>
-    {% endfor %}
+    <tbody id="asset-rows">
+        {% include "templates/_asset_rows.html" %}
+    </tbody>
 </table>
 {% endblock %} 

@@ -115,13 +115,20 @@ def update_asset(
     db.commit()
     return RedirectResponse(url="/assets", status_code=303)
 
-@app.post("/assets/{asset_id}/delete")
-def delete_asset(asset_id: int, db: Session = Depends(get_db)):
+
+@app.post("/assets/{asset_id}/delete", response_class=HTMLResponse)
+def delete_asset(asset_id: int, request: Request, db: Session = Depends(get_db)):
     asset = db.query(models.Asset).filter(models.Asset.id == asset_id).first()
     if asset:
         db.delete(asset)
         db.commit()
-    return RedirectResponse(url="/assets", status_code=303)
+    remaining = db.query(models.Asset).order_by(models.Asset.tag).all()
+    return templates.TemplateResponse(
+        request,
+        "templates/_asset_rows.html",
+        {"request": request, "assets": remaining},
+    )
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

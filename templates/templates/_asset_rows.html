@@ -1,0 +1,17 @@
+{% for asset in assets %}
+<tr>
+  <td>{{ asset.tag }}</td>
+  <td>{{ asset.type }}</td>
+  <td>{{ asset.model }}</td>
+  <td>{{ asset.status }}</td>
+  <td>
+    <a href="/assets/{{ asset.id }}/edit">Edit</a>
+    <button hx-post="/assets/{{ asset.id }}/delete"
+            hx-target="#asset-rows"
+            hx-swap="innerHTML"
+            hx-confirm="Delete {{ asset.tag }}? This cannot be undone.">
+      Delete
+    </button>
+  </td>
+</tr>
+{% endfor %}

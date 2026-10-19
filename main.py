@@ -17,6 +17,20 @@ app.mount("/static", StaticFiles(directory="static/static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
+def filter_assets(
+    db: Session, q: Optional[str] = None, status: Optional[str] = None
+):
+    query = db.query(models.Asset)
+    if status:
+        query = query.filter(models.Asset.status == status)
+    if q:
+        pattern = f"%{q}%"
+        query = query.filter(
+            models.Asset.model.ilike(pattern) | models.Asset.tag.ilike(pattern)
+        )
+    return query.order_by(models.Asset.tag).all()
+
+
 @app.get("/")
 def home():
     return {"message": "Asset Register is running!"}
@@ -29,15 +43,7 @@ def list_assets_page(
     q: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
-    query = db.query(models.Asset)
-    if status:
-        query = query.filter(models.Asset.status == status)
-    if q:
-        pattern = f"%{q}%"
-        query = query.filter(
-            models.Asset.model.ilike(pattern) | models.Asset.tag.ilike(pattern)
-        )
-    results = query.order_by(models.Asset.tag).all()
+    results = filter_assets(db, q=q, status=status)
     return templates.TemplateResponse(
         request,
         "assets.html",
@@ -48,6 +54,18 @@ def list_assets_page(
 @app.get("/assets/new", response_class=HTMLResponse)
 def new_asset_form(request: Request):
     return templates.TemplateResponse(request, "assets_form.html", {"request": request})
+
+@app.get("/assets/rows", response_class=HTMLResponse)
+def asset_rows(
+    request: Request,
+    q: Optional[str] = None,
+    status: Optional[str] = None,
+    db: Session = Depends(get_db),
+):
+    results = filter_assets(db, q, status)
+    return templates.TemplateResponse(
+        request, "templates/_asset_rows.html", {"request": request, "assets": results}
+    )
 
 
 @app.get("/assets/{tag}", response_class=HTMLResponse)

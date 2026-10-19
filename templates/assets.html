@@ -8,7 +8,13 @@
 <p><a href="/assets/new">Add New Asset</a></p>
 <!-- The table headings describe the four values shown for each asset. -->
  <form method="get" action="/assets">
-    <input type="text" name="q" placeholder="Search by tag or type" value="{{q or ''}}">
+    <input type="text" name="q" placeholder="Search tag or model"
+           value="{{ q or '' }}"
+           hx-get="/assets/rows"
+           hx-target="#asset-rows"
+           hx-swap="innerHTML"
+           hx-trigger="keyup changed delay:300ms, search"
+           hx-include="[name='status']">
     <select name="status">
         <option value="">All statuses</option>
         <option value="In Use">In Use</option>

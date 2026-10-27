@@ -71,3 +71,9 @@ This project now uses SQLite for persistent storage via SQLAlchemy. The database
 - Resolved duplicate-tag checks by querying the database instead of the old in-memory list.
 - Improved template and static file setup so pages render consistently in the browser.
 - Verified the app can save assets and keep them available after restarting the server.
+
+### Week 4
+- Completed full CRUD for assets: create, view details, edit, and delete records.
+- Added duplicate-tag checks when creating or updating assets.
+- Added HTMX live search by asset tag or model, updating the asset rows without a full page reload.
+- Kept status filtering available alongside search.

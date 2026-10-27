@@ -12,3 +12,11 @@ class Asset(Base):
     type = Column(String, nullable=False)
     model = Column(String, nullable=False)
     status = Column(String, nullable=False, default="In Use")
+
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, nullable=False, index=True)
+    password_hash = Column(String, nullable=False)
+    role = Column(String, nullable=False, default="staff")
